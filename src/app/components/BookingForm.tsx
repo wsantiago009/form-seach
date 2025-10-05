@@ -147,6 +147,7 @@ const BookingForm = ({ countries }: { countries: Country[] }) => {
                             id="location"
                             name="location"
                             status={errors.location ? 'error' : ''}
+                            onChange={() => handleFieldChange('location')}
                         />
                     </AutoComplete>
 
