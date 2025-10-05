@@ -1,6 +1,6 @@
 'use client'
 
-import { ConfigProvider, DatePicker } from 'antd'
+import { ConfigProvider } from 'antd'
 import { ReactNode } from 'react'
 
 export default function AntdProvider({ children }: { children: ReactNode }) {

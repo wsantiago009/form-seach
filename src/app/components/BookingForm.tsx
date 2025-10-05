@@ -2,11 +2,18 @@
 
 import { useState } from 'react'
 import Form from 'next/form'
+import { useRouter } from 'next/navigation'
 
 import { DatePicker, Input, InputNumber, Button } from 'antd'
 import type { Dayjs } from 'dayjs'
 
+import { useBookingContext } from '@/context/BookingContext'
+import { BookingFormData } from '@/types/index'
+import dayjs from 'dayjs'
+
 const BookingForm = () => {
+    const router = useRouter()
+    const { setData } = useBookingContext()
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [fromDate, setFromDate] = useState<Dayjs | null>(null)
     const [toDate, setToDate] = useState<Dayjs | null>(null)
@@ -75,13 +82,17 @@ const BookingForm = () => {
     }
 
     function onFinish(formData: FormData) {
-        // for (const [key, value] of formData.entries()) {
-        //     console.log(`${key}: ${value}`)
-        // }
-
         if (!validateForm(formData)) return
 
-        console.log('success')
+        const bookingData: BookingFormData = {
+            location: formData.get('location') as string,
+            from: dayjs(formData.get('from') as string),
+            to: dayjs(formData.get('to') as string),
+            adults: Number(formData.get('adults')) || 1,
+            children: Number(formData.get('children')) || 0,
+        }
+        setData(bookingData)
+        router.push('./search')
     }
 
     return (

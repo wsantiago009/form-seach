@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
-import AntdProvider from './providers/AntdProvider'
+import AntdProvider from '@/providers/AntdProvider'
 import './globals.css'
+
+import { BookingProvider } from '@/context/BookingContext'
 
 const openSans = Open_Sans({
     variable: '--font-open-sans',
@@ -24,7 +26,9 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${openSans.variable} antialiased`}>
                 <AntdRegistry>
-                    <AntdProvider>{children}</AntdProvider>
+                    <AntdProvider>
+                        <BookingProvider>{children}</BookingProvider>
+                    </AntdProvider>
                 </AntdRegistry>
             </body>
         </html>
