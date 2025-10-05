@@ -8,3 +8,8 @@ export type BookingFormData = {
     adults: number
     children: number
 }
+
+export type LocationFieldData = {
+    label: string
+    value: string
+}

@@ -4,19 +4,26 @@ import { useState } from 'react'
 import Form from 'next/form'
 import { useRouter } from 'next/navigation'
 
-import { DatePicker, Input, InputNumber, Button } from 'antd'
+import { DatePicker, AutoComplete, Input, InputNumber, Button } from 'antd'
 import type { Dayjs } from 'dayjs'
 
 import { useBookingContext } from '@/context/BookingContext'
 import { BookingFormData } from '@/types/index'
 import dayjs from 'dayjs'
+import { Country } from '@/types/api'
+import { LocationFieldData } from '@/types/index'
 
-const BookingForm = () => {
+const BookingForm = ({ countries }: { countries: Country[] }) => {
     const router = useRouter()
     const { setData } = useBookingContext()
+    const [options, setOptions] = useState<LocationFieldData[] | []>([])
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [fromDate, setFromDate] = useState<Dayjs | null>(null)
     const [toDate, setToDate] = useState<Dayjs | null>(null)
+    const countryOptions = countries.map((country: Country) => ({
+        label: country.name,
+        value: country.name,
+    }))
 
     function validateForm(formData: FormData): boolean {
         const newErrors: Record<string, string> = {}
@@ -50,17 +57,17 @@ const BookingForm = () => {
         }
     }
 
-    const handleFromDateChange = (date: Dayjs | null) => {
+    function handleFromDateChange(date: Dayjs | null) {
         setFromDate(date)
         handleFieldChange('from')
     }
 
-    const handleToDateChange = (date: Dayjs | null) => {
+    function handleToDateChange(date: Dayjs | null) {
         setToDate(date)
         handleFieldChange('to')
     }
 
-    const disableToDates = (current: Dayjs) => {
+    function disableToDates(current: Dayjs) {
         if (!fromDate) {
             return false
         }
@@ -71,7 +78,7 @@ const BookingForm = () => {
         )
     }
 
-    const disableFromDates = (current: Dayjs) => {
+    function disableFromDates(current: Dayjs) {
         if (!toDate) {
             return false
         }
@@ -79,6 +86,23 @@ const BookingForm = () => {
             (current && current.isAfter(toDate, 'day')) ||
             current.isSame(toDate?.subtract(0, 'day'), 'day')
         )
+    }
+
+    function handleSearch(searchText: string) {
+        if (!searchText) {
+            setOptions(countryOptions)
+            return
+        }
+
+        const filteredOptions = countryOptions.filter(
+            (country) =>
+                country.label
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) ||
+                country.value.toLowerCase().includes(searchText.toLowerCase()),
+        )
+
+        setOptions(filteredOptions)
     }
 
     function onFinish(formData: FormData) {
@@ -112,14 +136,19 @@ const BookingForm = () => {
                 </div>
                 <div className="col-span-12 mb-4">
                     <label htmlFor="location">Location</label>
-                    <Input
-                        placeholder="Anywhere"
+                    <AutoComplete
                         className="w-full placeholder:text-sm"
-                        id="location"
-                        name="location"
-                        status={errors.location ? 'error' : ''}
-                        onChange={() => handleFieldChange('location')}
-                    />
+                        options={options}
+                        onSearch={handleSearch}
+                        placeholder="Anywhere"
+                    >
+                        <Input
+                            className="w-full placeholder:text-sm"
+                            id="location"
+                            name="location"
+                            status={errors.location ? 'error' : ''}
+                        />
+                    </AutoComplete>
 
                     {errors.location && (
                         <p className="text-red-500 text-xs mt-1">
