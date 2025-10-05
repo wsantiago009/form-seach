@@ -40,6 +40,10 @@ export default function AntdProvider({ children }: { children: ReactNode }) {
                         hoverBorderColor: '#e5e7eb',
                         colorBgContainer: ' #F3F4F6',
                         hoverBg: '#E5E7EB',
+
+                        cellHeight: 22,
+                        cellWidth: 33,
+                        fontSize: 14,
                     },
                 },
             }}
